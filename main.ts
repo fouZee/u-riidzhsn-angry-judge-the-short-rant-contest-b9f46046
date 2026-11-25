@@ -6,16 +6,26 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 export const RANT =
-  "My office printer has one job and it refuses to do it. It prints forty pages of a report nobody asked for, then jams on the one page I actually need, flashes 'PC LOAD LETTER' like that is a sentence, and runs out of toner mid-signature, so the boss gets a contract signed by a ghost. It does not print documents. It prints disappointment, one paper jam at a time.";
+  "My office printer is a saboteur with a paper tray. It happily prints forty pages nobody asked for, then jams on the single page I actually need, flashes 'PC LOAD LETTER' like that is a sentence, and runs out of toner halfway through my signature, so my boss receives a contract signed by a ghost. It has one job. It has chosen violence instead.";
 
 export const MAX_CHARS = 400;
+
+export const MIN_CHARS = 50;
 
 export function validate(text: string): string[] {
   const problems: string[] = [];
   if (text.length < 1) problems.push("entry is empty");
+  if (text.length < MIN_CHARS)
+    problems.push(`entry is ${text.length} chars, under the ${MIN_CHARS}-char minimum for a real rant`);
   if (text.length > MAX_CHARS)
     problems.push(`entry is ${text.length} chars, over the 400-char cap`);
   if (text.trim().length === 0) problems.push("entry is only whitespace");
+  if (text !== text.trim())
+    problems.push("entry has leading or trailing whitespace");
+  if (/\r|\n/.test(text))
+    problems.push("entry must be a single line of text, no newlines");
+  if (!/[.!?]$/.test(text.trim()))
+    problems.push("entry must end with terminal punctuation");
   return problems;
 }
 
